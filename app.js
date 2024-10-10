@@ -4,7 +4,7 @@ const cors = require('cors');
 const consign = require('consign');
 const http = require('http');
 const https = require('https');
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const { disableCors, origin, forcarHTTPS, credentials } = require(resolve("src", "config"));
 
 app.use(express.json({limit:'10mb'}));
@@ -22,7 +22,7 @@ const io = disableCors ? require("socket.io")(httpServer, {
 }) : require("socket.io")(httpsServer);
 
 consign()
-    .include(resolve("src", "controllers"))
+    .include(join("src", "controllers"))
     .into(app, io);
 
 if(forcarHTTPS){
