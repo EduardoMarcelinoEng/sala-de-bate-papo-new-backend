@@ -4,10 +4,10 @@ const { Room } = require(resolve('src', 'app', 'models'));
 const utils = require(resolve('src', 'utils'));
 
 module.exports = (app, io)=>{
-    app.get(`${routerBase}/:url`, async (req, res)=>{
+    app.get(`${routerBase}`, async (req, res)=>{
         try {
             
-            const { url } = req.params;
+            const { url } = req.query;
 
             const room = await Room.findOne({
                 where: {
