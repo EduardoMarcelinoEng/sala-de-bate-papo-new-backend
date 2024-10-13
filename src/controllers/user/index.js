@@ -1,6 +1,6 @@
 const routerBase = "/user";
 const { resolve } = require("path");
-const { User } = require(resolve('src', 'app', 'models'));
+const { User, UsersPerRoom, Room } = require(resolve('src', 'app', 'models'));
 const moment = require("moment");
 
 module.exports = (app, io)=>{
@@ -12,8 +12,21 @@ module.exports = (app, io)=>{
             const user = await User.findOne({
                 where: {
                     nickname
-                }
+                },
+                include: [
+                    {
+                        model: UsersPerRoom,
+                        include: [
+                            {
+                                model: Room
+                            }
+                        ]
+                    }
+                ]
             });
+
+            user.dataValues.rooms = user.UsersPerRooms.map(({ Room, isFavorite }) => ({ url: Room.url, isFavorite }));
+            delete user.dataValues.UsersPerRooms;
 
             return res.status(200).json(user);
 

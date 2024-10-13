@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.UsersPerRoom, { foreignKey: 'roomURL' });
+      this.hasMany(models.Message, { foreignKey: 'roomURL' });
     }
   }
   Room.init({
