@@ -25,6 +25,8 @@ module.exports = (app, io)=>{
                 ]
             });
 
+            if(!user) return res.status(200).json(null);
+
             user.dataValues.rooms = user.UsersPerRooms.map(({ Room, isFavorite }) => ({ url: Room.url, isFavorite }));
             delete user.dataValues.UsersPerRooms;
 
@@ -35,7 +37,7 @@ module.exports = (app, io)=>{
         }
     });
 
-    app.get(`${routerBase}`, async ()=>{
+    app.get(`${routerBase}`, async (req, res)=>{
         try {
             const users = await User.findAll();
 
@@ -59,6 +61,8 @@ module.exports = (app, io)=>{
             const user = await User.create({
                 nickname
             });
+
+            user.dataValues.rooms = [];
 
             return res.status(201).json(user);
 
