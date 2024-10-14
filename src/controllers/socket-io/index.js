@@ -7,7 +7,7 @@ module.exports = function(app, io) {
     const userNamespace = io.of("/");
     userNamespace.use(auth);
 
-    userNamespace.on("connection", (socket) => {
+    userNamespace.on("connection", socket => {
         const user = socket.handshake.auth.user;
         socket.data.userId = user.id;
         socket.data.registerFinished = socket.handshake.auth.registerFinished;
@@ -60,16 +60,16 @@ module.exports = function(app, io) {
 
         socket.on('chat:send', async ({ text, url }, data)=>{
 
-            const isInTheRoom = await UsersPerRoom.findOne({
-                where: {
-                    roomURL: url,
-                    nickname: user.nickname
-                }
-            });
+            const isInTheRoom = socket.rooms.has(url);
 
             if(!isInTheRoom && data) return data({
                 isError: true,
                 message: `Você não está na sala ${url}`
+            });
+
+            if(!text) return data({
+                isError: true,
+                message: `Mensagem vazia`
             });
 
             const message = await Message.create({
