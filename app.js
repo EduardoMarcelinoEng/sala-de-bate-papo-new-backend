@@ -5,7 +5,10 @@ const consign = require('consign');
 const http = require('http');
 const https = require('https');
 const { resolve, join } = require('path');
+const { existsSync } = require('fs');
 const { disableCors, origin, forcarHTTPS, credentials } = require(resolve("src", "config"));
+
+app.use(express.static("build"));
 
 app.use(express.json({limit:'10mb'}));
 app.use(express.urlencoded({extended:false}));
@@ -31,6 +34,14 @@ if(forcarHTTPS){
         else next();
     });
 }
+
+app.get("*", (req, res) => {
+    let pathBuild = join(__dirname, "build", "index.html");
+    if(existsSync(pathBuild)){
+        return res.sendFile(pathBuild);
+    }
+    res.status(404).send("Route not found.");
+});
 
 module.exports = {
     httpServer,
